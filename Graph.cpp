@@ -3,6 +3,8 @@
 #include "Graph.hpp"
 using namespace ariel;
 
+
+
 void Graph::loadGraph(vector<vector<int>> adjMatrix)
 {
     if (adjMatrix.empty())
@@ -86,6 +88,44 @@ void Graph::printGraph()
         cout << "This is a directed weighted graph with negative weights, " << numVertices << " vertices and " << numEdges << " edges" << endl;
     }
 }
+
+static bool contains(const vector<vector<int>> &matrixA, const vector<vector<int>> &matrixB)
+{
+    int n = matrixA.size();
+    int m = matrixB.size();
+    if (n < m)
+        return false;
+    for (size_t i = 0; i <= n - m; ++i)
+    {
+        for (size_t j = 0; j <= n - m; ++j)
+        {
+            bool match = true;
+            for (size_t x = 0; x < m; ++x)
+            {
+                for (size_t y = 0; y < m; ++y)
+                {
+                    if (matrixA[i + x][j + y] != matrixB[x][y])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (!match)
+                    break;
+            }
+            if (match)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+
+
 /**
  @brief overloading the + operator
   @param other - the graph to add to the current graph
@@ -103,7 +143,7 @@ Graph Graph::operator+(const Graph &other)
     {
         throw invalid_argument("The graphs have different number of vertices");
     }
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -132,7 +172,7 @@ Graph Graph::operator-(const Graph &other)
     {
         throw invalid_argument("The graphs have different number of vertices");
     }
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -199,7 +239,7 @@ Graph Graph::operator-()
         throw invalid_argument("The graph is not loaded");
     }
     Graph newGraph;
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -226,7 +266,7 @@ Graph Graph::operator*(const Graph &other)
     {
         throw invalid_argument("The graphs have different number of vertices");
     }
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++) // Matrix multiplication
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -285,7 +325,7 @@ Graph Graph::operator*=(const Graph &other)
     {
         throw invalid_argument("The graphs have different number of vertices");
     }
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++) // Matrix multiplication
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -326,13 +366,13 @@ bool Graph::operator==(const Graph &other)
                     break;
                 }
             }
-            if (eq)
-                return true;
         }
-        if (!((*this) > other) && !((*this) < other))
+        if (eq)
             return true;
-        return false;
     }
+    if (!((*this) > other) && !((*this) < other))
+        return true;
+    return false;
 }
 bool Graph::operator!=(const Graph &other)
 {
@@ -346,39 +386,50 @@ bool Graph::operator>(const Graph &other)
         throw invalid_argument("One of the graph isn't loaded");
     }
 
-    if(this->numVertices==other.numVertices){
+    if (this->numVertices == other.numVertices)
+    {
         bool eq = true;
-       for(size_t i =0;i<numVertices;i++){
-        for(size_t j = 0; j<numVertices;j++){
-            if(this->adjMatrix[i][j]!=other.adjMatrix[i][j]){
-                eq =false;
-                break;
+        for (size_t i = 0; i < numVertices; i++)
+        {
+            for (size_t j = 0; j < numVertices; j++)
+            {
+                if (this->adjMatrix[i][j] != other.adjMatrix[i][j])
+                {
+                    eq = false;
+                    break;
+                }
             }
+            if (!eq)
+                break;
         }
-        if(!eq) break;
-       }
-       if(eq) return false;
+        if (eq)
+            return false;
     }
-    bool g1Cg2 = contains(this->adjMatrix,other.adjMatrix);
-    bool g2Cg1 = contains(other.adjMatrix,this->adjMatrix);
+    bool g1Cg2 = contains(this->adjMatrix, other.adjMatrix);
+    bool g2Cg1 = contains(other.adjMatrix, this->adjMatrix);
 
-    if(g1Cg2) return true; ///test what happens if one directed and the other not. 
-    else if(g2Cg1) return false;
-    if(this->numEdges!=other.numEdges) return this->numEdges>other.numEdges;
-    return this->numVertices>other.numVertices;
-
+    if (g1Cg2)
+        return true; /// test what happens if one directed and the other not.
+    else if (g2Cg1)
+        return false;
+    if (this->numEdges != other.numEdges)
+        return this->numEdges > other.numEdges;
+    return this->numVertices > other.numVertices;
 }
-bool Graph::operator<(const Graph &other){
+bool Graph::operator<(const Graph &other)
+{
     Graph g;
     g.loadGraph(other.adjMatrix);
-    return (g>(*this));
+    return (g > (*this));
 }
-bool Graph::operator<=(const Graph &other){
-    return ((*this)==other)||((*this)<other);
+bool Graph::operator<=(const Graph &other)
+{
+    return ((*this) == other) || ((*this) < other);
 }
-bool Graph::operator>=(const Graph &other){
-    return ((*this)==other)||((*this)>other);
-    }
+bool Graph::operator>=(const Graph &other)
+{
+    return ((*this) == other) || ((*this) > other);
+}
 /**
  @brief overloading the ++X operator. Increments all the edges in the graph by 1. (Only the edges that exists)
  @return the current graph after the increment
@@ -442,7 +493,7 @@ Graph Graph::operator++(int)
     }
 
     Graph newGraph;
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -469,7 +520,7 @@ Graph Graph::operator--(int)
     }
 
     Graph newGraph;
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -497,7 +548,7 @@ Graph Graph::operator*(int x)
     }
 
     Graph newGraph;
-    vector<vector<int>> newMatrix(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
@@ -532,51 +583,22 @@ Graph Graph::operator*=(int x)
     this->loadGraph(adjMatrix);
     return *this;
 }
- ostream &operator<<(ostream &output, const Graph &g){
-     if (!g.isLoaded())
+ostream &operator<<(ostream &output, Graph &g)
+{
+    if (!g.isLoaded())
     {
-       throw invalid_argument("One of the graph isn't loaded");
+        throw invalid_argument("One of the graph isn't loaded");
     }
     vector<vector<int>> adjMatrix = g.getAdjMatrix();
-    for(size_t i=0;i<adjMatrix.size();i++){
-        output<<"[";
-        for(size_t j =0;j<adjMatrix.size()-1;){
-            output<<adjMatrix[i][j]<<", ";
+    for (size_t i = 0; i < adjMatrix.size(); i++)
+    {
+        output << "[";
+        for (size_t j = 0; j < adjMatrix.size() - 1;)
+        {
+            output << adjMatrix[i][j] << ", ";
         }
-        output<<adjMatrix[i][adjMatrix.size()-1]<<"]\n";
+        output << adjMatrix[i][adjMatrix.size() - 1] << "]\n";
     }
     return output;
 }
 
-static bool contains(const vector<vector<int>> &matrixA, const vector<vector<int>> &matrixB)
-{
-    int n = matrixA.size();
-    int m = matrixB.size();
-    if(n<m) return false;
-    for (size_t i = 0; i <= n - m; ++i)
-    {
-        for (size_t j = 0; j <= n - m; ++j)
-        {
-            bool match = true;
-            for (size_t x = 0; x < m; ++x)
-            {
-                for (size_t y = 0; y < m; ++y)
-                {
-                    if (matrixA[i + x][j + y] != matrixB[x][y])
-                    {
-                        match = false;
-                        break;
-                    }
-                }
-                if (!match)
-                    break;
-            }
-            if (match)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}

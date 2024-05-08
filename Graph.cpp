@@ -299,13 +299,13 @@ Graph Graph::operator*=(const Graph &other){
     this->loadGraph(newMatrix);
     return *this;
 }
-Graph Graph::operator==(const Graph &other);                 // overloading the == operator
-Graph Graph::operator!=(const Graph &other);                 // overloading the != operator
-Graph Graph::operator<(const Graph &other);                  // overloading the < operator
-Graph Graph::operator>(const Graph &other);                  // overloading the > operator
-Graph Graph::operator<=(const Graph &other);                 // overloading the <= operator
-Graph Graph::operator>=(const Graph &other);                 // overloading the >= operator
-/**
+ bool Graph::operator==(const Graph& other); //overloading the == operator
+    bool Graph::operator!=(const Graph& other); //overloading the != operator
+    bool Graph::operator<(const Graph& other); //overloading the < operator
+    bool Graph::operator>(const Graph& other); //overloading the > operator
+    bool Graph::operator<=(const Graph& other); //overloading the <= operator
+    bool Graph::operator>=(const Graph& other); //overloading the >= operator
+    /**
      @brief overloading the ++X operator. Increments all the edges in the graph by 1. (Only the edges that exists)
      @return the current graph after the increment
      @throw invalid_argument if the graph is not loaded

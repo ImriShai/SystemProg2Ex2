@@ -456,3 +456,8 @@ Graph Graph::operator*=(int x){
     return *this;
 }
 friend ostream &operator<<(ostream &output, const Graph &g); // overloading the << operator
+
+static bool contains(const vector<vector<int>> &MatrixA, const vector<vector<int>> &MatrixB){
+    
+    return true;
+}

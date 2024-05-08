@@ -54,5 +54,28 @@ class Graph{
 
     void loadGraph(vector<vector<int>> adjMatrix);
 
+    Graph Graph::operator+(const Graph& other); //overloading the + operator
+    Graph Graph::operator-(const Graph& other); //overloading the - operator
+    Graph Graph::operator-=(const Graph& other); //overloading the -= operator
+    Graph Graph::operator+(); //overloading the + unary operator
+    Graph Graph::operator-(); //overloading the - unary operator
+    Graph Graph::operator*(const Graph& other); //overloading the * operator
+    Graph Graph::operator+=(const Graph& other); //overloading the += operator
+    Graph Graph::operator*=(const Graph& other); //overloading the *= operator
+    Graph Graph::operator==(const Graph& other); //overloading the == operator
+    Graph Graph::operator!=(const Graph& other); //overloading the != operator
+    Graph Graph::operator<(const Graph& other); //overloading the < operator
+    Graph Graph::operator>(const Graph& other); //overloading the > operator
+    Graph Graph::operator<=(const Graph& other); //overloading the <= operator
+    Graph Graph::operator>=(const Graph& other); //overloading the >= operator
+    Graph Graph::operator++(); //overloading the X++ operator
+    Graph Graph::operator--(); //overloading the X-- operator
+    Graph Graph::operator++(int); //overloading the ++X operator
+    Graph Graph::operator--(int); //overloading the --X operator
+    Graph Graph::operator*(int x); //overloading the * operator, multiplying the graph by a scalar
+    Graph Graph::operator*=(int x); //overloading the *= operator, multiplying the graph by a scalar
+    friend ostream& operator<<(ostream& output, const Graph& g); //overloading the << operator 
+
+
 };
 }

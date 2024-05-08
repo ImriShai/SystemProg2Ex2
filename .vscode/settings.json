@@ -1,0 +1,24 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/imri/SystemProg2Ex2",
+            "binaryPath": "/home/imri/SystemProg2Ex2/test",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/imri/SystemProg2Ex2",
+            "binaryPath": "/home/imri/SystemProg2Ex2/demo",
+            "binaryArgs": []
+        }
+    ],
+    "files.associations": {
+        "*.tcc": "cpp",
+        "cstddef": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "iomanip": "cpp",
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "thread": "cpp"
+    }
+}

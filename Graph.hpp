@@ -18,41 +18,44 @@ class Graph{
     bool loaded;
     public:
     Graph():loaded(false){};
-    vector<vector<int>> getAdjMatrix(){
+    const vector<vector<int>>& getAdjMatrix() const{
         return adjMatrix;
     }
-    void printGraph();
+    const void printGraph();
 
-    bool isDirected(){
+    const bool isDirected() const{
          if(!loaded){
             throw invalid_argument("The graph is not loaded");
         }
         return directed;
     }
-    bool isNegative(){
+   const  bool isNegative() const{
          if(!loaded){
             throw invalid_argument("The graph is not loaded");
         }
         return negative;
     }
-    bool isWeighted(){
+   const  bool isWeighted() const{
          if(!loaded){
             throw invalid_argument("The graph is not loaded");
         }
         return weighted;
 
     }
-    bool isSameWeight(){
+  const  bool isSameWeight() const{
         if(!loaded){
             throw invalid_argument("The graph is not loaded");
         }
         return sameWeight;
     }
-    bool isLoaded(){
+   const bool isLoaded() const{
         return loaded;
     }
 
     void loadGraph(vector<vector<int>> adjMatrix);
+
+
+
 
     Graph operator+(const Graph& other); //overloading the + operator
     Graph operator-(const Graph& other); //overloading the - operator
@@ -75,5 +78,7 @@ class Graph{
     Graph operator*(int x); //overloading the * operator, multiplying the graph by a scalar
     Graph operator*=(int x); //overloading the *= operator, multiplying the graph by a scalar
     friend ostream& operator<<(ostream& output, const Graph& g); //overloading the << operator 
+
 };
+
 }

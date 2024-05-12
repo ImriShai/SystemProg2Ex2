@@ -23,6 +23,8 @@ ariel::Graph g;
          {1, 0, 1},
          {0, 1, 0}};
     g.loadGraph(graph); // Load the graph to the object.
+    g++;
+    cout<<g;
 
     g.printGraph();                                    // Should print: "This is a undirected and unweighted graph with 3 vertices and 2 edges"
     cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).

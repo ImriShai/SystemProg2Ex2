@@ -1,7 +1,60 @@
 /** Implementation of the Algorithm class*/
 #include "Algorithms.hpp"
+#include <sstream> // Include the <sstream> header file
 
 using namespace std;
+
+
+/**
+ * @brief This function reverses a given path
+ * @param The path as a string
+ * @return The reversed path, for example, given 1->2->3 return 3->2->1
+*/
+static string reverse(string path){
+    string res = "";
+    stringstream ss(path);
+    string token;
+    while(getline(ss, token, '>')) { //splits the path by ">"
+        if(token[token.size()-1] == '-') { //removes the last character if it is a '-'
+            token.pop_back();
+        }
+        res = token + "->" + res; //concatenates the current vertex to the result
+    }
+    res.pop_back();
+    res.pop_back(); //removes last ->
+    return res; 
+}
+/**
+ * @brief This function is a utill function that gets a path, and gets the actual cost of it in graph g
+ * @param g the graph
+ * @param path the path
+ * @return The actual cost of the path
+*/
+static int parsePath(const ariel::Graph &g, string path) {
+    int cost = 0;
+    stringstream ss(path);
+    string token;
+    int prevVertex = -1;
+
+    while(getline(ss, token, '>')) {  //splits the path by the '>'
+        if(token[token.size()-1] == '-') {//removes the last character if it is a '-'
+            token.pop_back();
+        }
+        int currentVertex = stoi(token);//converts the token to an integer
+        if(prevVertex != -1) {//if it is not the first vertex
+            if(currentVertex < 0 || currentVertex >= g.getAdjMatrix().size()) {//if not succeded at converting stoi throws error
+                throw invalid_argument("The path is invalid");
+            }
+            cost += g.getAdjMatrix()[(size_t)prevVertex][(size_t)currentVertex]; //add the actual cost by using the adjacency matrix
+        }
+        prevVertex = currentVertex;
+    }
+
+    return cost;
+}
+
+
+
 /**
  * @brief A util function that checks if the graph contains a cycle
  * The function uses a modified version of the Depth First Search algorithm to find a cycle in the graph
@@ -13,7 +66,7 @@ using namespace std;
  * @param parent the parent vector, that keeps track of the parent of each vertex
  * @return the cycle if exists, otherwise return "No cycle detected"
  */
-static int isContainsCycleUtil(ariel::Graph g, int v, vector<bool> &visited, vector<int> &parent)
+static int isContainsCycleUtil(const ariel::Graph &g, int v, vector<bool> &visited, vector<int> &parent)
 {
 
     visited[(size_t)v] = true; // marking the current vertex as visited
@@ -73,7 +126,7 @@ static ariel::Graph transpose(ariel::Graph g)
  * @param start the start vertex to run the DFS from
  * @param visited the visited vector, that keeps track of the visited vertices
  * */
-static void DFS(ariel::Graph g, int start, vector<bool> &visited)
+static void DFS(const ariel::Graph &g, int start, vector<bool> &visited)
 {
     visited[(size_t)start] = true;
     vector<vector<int>> adjMatrix = g.getAdjMatrix();
@@ -96,7 +149,7 @@ static void DFS(ariel::Graph g, int start, vector<bool> &visited)
  * @param end the end vertex
  * @return the path between the start and end vertices
  * */
-static string BFS(ariel::Graph g, int start, int end)
+static string BFS(const ariel::Graph &g, int start, int end)
 {
     vector<vector<int>> adjMatrix = g.getAdjMatrix(); // get the adjacency matrix of the graph, and initialize the visited, distance, and parent vectors
     vector<bool> visited(adjMatrix.size(), false);
@@ -149,7 +202,7 @@ static string BFS(ariel::Graph g, int start, int end)
  * @param end the end vertex
  * @return the path between the start and end vertices
  * */
-static string dijkstra(ariel::Graph g, int start, int end)
+static string dijkstra(const ariel::Graph &g, int start, int end)
 {
     vector<vector<int>> adjMatrix = g.getAdjMatrix();
     size_t V = (size_t)adjMatrix.size(); // Number of vertices in the graph
@@ -217,7 +270,7 @@ static string dijkstra(ariel::Graph g, int start, int end)
  * @param end the end vertex
  * @return the path between the start and end vertices
  * */
-static string bellmanFord(ariel::Graph g, int start, int end)
+static string bellmanFord(const ariel::Graph &g, int start, int end)
 {
 
     vector<vector<int>> adjMatrix = g.getAdjMatrix();
@@ -277,6 +330,7 @@ static string bellmanFord(ariel::Graph g, int start, int end)
 
     if (distance[(size_t)end] == INT_MAX)
         return "There is no path between vertex " + to_string(start) + " and vertex " + to_string(end);
+   
     string path = "";
     for (int v = end; v != -1; v = parent[(size_t)v])
     { // create the path by going through the parent vector
@@ -293,7 +347,7 @@ static string bellmanFord(ariel::Graph g, int start, int end)
  * @param g the graph
  * @return true if the graph is connected, otherwise return false
  * */
-bool ariel::Algorithms::isConnected(ariel::Graph g)
+bool ariel::Algorithms::isConnected(const ariel::Graph &g)
 {
      if(!g.isLoaded()){
             throw invalid_argument("The graph is not loaded");
@@ -326,7 +380,7 @@ bool ariel::Algorithms::isConnected(ariel::Graph g)
     return true;
 }
 
-string ariel::Algorithms::isContainsCycle(ariel::Graph g)
+string ariel::Algorithms::isContainsCycle(const ariel::Graph &g)
 { // running a version of DSF that will return the actual cycle
  if(!g.isLoaded()){
             throw invalid_argument("The graph is not loaded");
@@ -365,7 +419,7 @@ string ariel::Algorithms::isContainsCycle(ariel::Graph g)
  * @param g the graph
  * @return the two sets of the bipartite graph, or an error message if the graph is not bipartite
  */
-string ariel::Algorithms::isBipartite(ariel::Graph g)
+string ariel::Algorithms::isBipartite(const ariel::Graph &g)
 {
      if(!g.isLoaded()){
             throw invalid_argument("The graph is not loaded");
@@ -449,7 +503,7 @@ string ariel::Algorithms::isBipartite(ariel::Graph g)
  * @param end the end vertex
  * @return the path between the start and end vertices, or an error message if the start or end vertices are invalid, or if there is no path between the start and end vertices
  */
-string ariel::Algorithms::shortestPath(ariel::Graph g, int start, int end)
+string ariel::Algorithms::shortestPath(const ariel::Graph &g, int start, int end)
 {
      if(!g.isLoaded()){
             throw invalid_argument("The graph is not loaded");
@@ -458,8 +512,24 @@ string ariel::Algorithms::shortestPath(ariel::Graph g, int start, int end)
         return "Start or End vertices are invalid!";
     if (start == end)
         return "A path from a vertex to itself isn't defined!";
-    if (g.isNegative())
+    if (g.isNegative()&&g.isDirected())
         return bellmanFord(g, start, end);
+    if(g.isNegative()&&!g.isDirected()){ //because BF isn't for undirected graphs, I needed to add an extra condition, that it cannot use the same edge in different direction, other wise it will "ping-pong" between 
+        string path1 = bellmanFord(g,start,end);// the vertices of that edge, if it has negative weight. By this condition we created a new problem, that the path will be different if we start from the start vertex or the end vertex
+        if(path1=="Negative cycle detected")//but because the graph is undirected both path should be the same, so we chooce the lighter one.
+            return path1;
+        int cost1 = parsePath(g,path1);
+        string path2 = bellmanFord(g,end,start);
+        if(path2=="Negative cycle detected") return path1;
+        int cost2 = parsePath(g,path2);
+        if (cost1<=cost2)
+        {
+           return path1;
+        }
+        return reverse(path2);
+        
+
+    }
     if (g.isSameWeight())
         return BFS(g, start, end);
     return dijkstra(g, start, end);
@@ -473,7 +543,7 @@ string ariel::Algorithms::shortestPath(ariel::Graph g, int start, int end)
  * @param g the graph
  * @return the negative cycle if exists, otherwise return "There is no negative cycle in the graph"
  */
-string ariel::Algorithms::negativeCycle(ariel::Graph g){
+string ariel::Algorithms::negativeCycle(const ariel::Graph &g){
  if(!g.isLoaded()){
             throw invalid_argument("The graph is not loaded");
         }

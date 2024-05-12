@@ -4,12 +4,13 @@
 
 /**
  * @brief Test cases for the Graph class and the Algorithms class
-*/
+ */
 
 using namespace std;
 
-TEST_CASE("Test without loading"){
-    ariel :: Graph g;
+TEST_CASE("Test without loading")
+{
+    ariel ::Graph g;
     CHECK_THROWS(g.printGraph());
     CHECK_THROWS(g.isDirected());
     CHECK_THROWS(g.isNegative());
@@ -21,19 +22,18 @@ TEST_CASE("Test without loading"){
     CHECK_THROWS(ariel::Algorithms::isContainsCycle(g));
     CHECK_THROWS(ariel::Algorithms::negativeCycle(g));
     CHECK_THROWS(ariel::Algorithms::shortestPath(g, 0, 1));
-
-   
-
 }
 
 TEST_CASE("Test isConnected")
 {
-    ariel::Graph g;
+     ariel::Graph g;
+    
     vector<vector<int>> graph = {
         {0, 1, 0},
         {1, 0, 1},
         {0, 1, 0}};
     g.loadGraph(graph);
+
     CHECK(ariel::Algorithms::isConnected(g) == true);
 
     vector<vector<int>> graph1 = {
@@ -126,6 +126,29 @@ TEST_CASE("Test shortestPath for BFS and BF")
         {0, -2, 0, 0}};
     g.loadGraph(graph7);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "There is no path between vertex 0 and vertex 3");
+
+     vector<vector<int>> graph8 =
+        {{0, 10, -1, 1, 0},
+         {10, 0, 10, 0, 0},
+         {-1, 10, 0, 0, 2},
+         {1, 0, 0, 0, 0},
+         {0, 0, 2, 0, 0}};
+    g.loadGraph(graph8);
+    CHECK(ariel::Algorithms::shortestPath(g,1,2) == "1->0->2");
+    CHECK(ariel::Algorithms::shortestPath(g,0,2) == "0->2");
+    CHECK(ariel::Algorithms::shortestPath(g,1,0) == "1->2->0");
+
+    vector<vector<int>> graph9={{0, 4, 2, 0, 0, 0},
+                                {4, 0, -5, -5, 0, -7},
+                                {2, -5, 0, 0, -1, 0},
+                                {0, -5, 0, 0, 0, 0},
+                                {0, 0, -1, 0, 0, 0},
+                                {0, -7, 0, 0, 0, 0}};
+    g.loadGraph(graph9);
+    CHECK(ariel::Algorithms::shortestPath(g,0,5)=="0->2->1->5");
+
+
+
 }
 TEST_CASE("Test shortest path Dijkstra")
 {
@@ -317,90 +340,92 @@ TEST_CASE("Test isBipartite")
         {7, 1, 0}};
     g.loadGraph(graph12);
     CHECK(ariel::Algorithms::isBipartite(g) == "There is no valid bipartite partition of the graph");
+}
+TEST_CASE("Test invalid graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 2, 0},
+        {1, 0, 3, 0},
+        {2, 3, 0, 4},
+        {0, 0, 4, 0},
+        {0, 0, 0, 5}};
+    CHECK_THROWS(g.loadGraph(graph));
 
-    } TEST_CASE("Test invalid graph")
+    vector<vector<int>> graph1 = {
+        {}};
+    CHECK_THROWS(g.loadGraph(graph));
+
+    vector<vector<int>> graph2 = {// empty graph, 1 vertex and 0 edges
+                                  {0}};
+    CHECK_NOTHROW(g.loadGraph(graph2));
+    vector<vector<int>> graph3 = {
+        {1}};
+    CHECK_THROWS(g.loadGraph(graph3));
+
+    vector<vector<int>> graph4 = {
+        {1, 3, 4},
+        {0, 0, 0},
+        {0, 0, 0}};
+    CHECK_THROWS(g.loadGraph(graph4));
+}
+TEST_CASE("Test negative cycle")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 0, 0, 0},
+        {4, 0, -6, 0},
+        {0, 0, 0, 5},
+        {0, -2, 0, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::negativeCycle(g) == "1->2->3->1");
+
+    vector<vector<int>> graph3 = {
+        {0, 8, -1},
+        {8, 0, -5},
+        {-1, -5, 0}};
+    g.loadGraph(graph3);
+    CHECK(ariel::Algorithms::negativeCycle(g) == "There is no negative cycle in the graph");
+
+    vector<vector<int>> graph4 = {
+        {0, 8, -2},
+        {8, 0, -5},
+        {-1, -5, 0}};
+    g.loadGraph(graph4);
+    CHECK((ariel::Algorithms::negativeCycle(g) == "0->2->0" || ariel::Algorithms::negativeCycle(g) == "2->0->2"));
+
+    vector<vector<int>> graph5 = {
+        {0, 8, -1},
+        {8, 0, -4},
+        {-1, -5, 0}};
+    g.loadGraph(graph5);
+    CHECK((ariel::Algorithms::negativeCycle(g) == "0->2->0" || ariel::Algorithms::negativeCycle(g) == "2->0->2"));
+
+    vector<vector<int>> graph8 = {
+        {0, 0, 0, 0},
+        {4, 0, -6, 0},
+        {0, 0, 0, 5},
+        {0, -2, 0, 0}};
+    g.loadGraph(graph8);
+    CHECK(ariel::Algorithms::negativeCycle(g) == "1->2->3->1");
+
+   
+}
+
+    TEST_CASE("Empty graph")
     {
-        ariel::Graph g;
-        vector<vector<int>> graph = {
-            {0, 1, 2, 0},
-            {1, 0, 3, 0},
-            {2, 3, 0, 4},
-            {0, 0, 4, 0},
-            {0, 0, 0, 5}};
-        CHECK_THROWS(g.loadGraph(graph));
-
-        vector<vector<int>> graph1 = {
-            {}};
-        CHECK_THROWS(g.loadGraph(graph));
-
-        vector<vector<int>> graph2 = {// empty graph, 1 vertex and 0 edges
-                                      {0}};
-        CHECK_NOTHROW(g.loadGraph(graph2));
-        vector<vector<int>> graph3 = {
-            {1}};
-        CHECK_THROWS(g.loadGraph(graph3));
-
-        vector<vector<int>> graph4 = {
-            {1, 3, 4},
-            {0, 0, 0},
-            {0, 0, 0}};
-        CHECK_THROWS(g.loadGraph(graph4));
-    }
-    TEST_CASE("Test negative cycle")
-    {
-        ariel::Graph g;
-        vector<vector<int>> graph = {
-            {0, 0, 0, 0},
-            {4, 0, -6, 0},
-            {0, 0, 0, 5},
-            {0, -2, 0, 0}};
-        g.loadGraph(graph);
-        CHECK(ariel::Algorithms::negativeCycle(g) == "1->2->3->1");
-
-        vector<vector<int>> graph3 = {
-            {0, 8, -1},
-            {8, 0, -5},
-            {-1, -5, 0}};
-        g.loadGraph(graph3);
-        CHECK(ariel::Algorithms::negativeCycle(g) == "There is no negative cycle in the graph");
-
-        vector<vector<int>> graph4 = {
-            {0, 8, -2},
-            {8, 0, -5},
-            {-1, -5, 0}};
-        g.loadGraph(graph4);
-        CHECK((ariel::Algorithms::negativeCycle(g) == "0->2->0" || ariel::Algorithms::negativeCycle(g) == "2->0->2"));
-
-        vector<vector<int>> graph5 = {
-            {0, 8, -1},
-            {8, 0, -4},
-            {-1, -5, 0}};
-        g.loadGraph(graph5);
-        CHECK((ariel::Algorithms::negativeCycle(g) == "0->2->0" || ariel::Algorithms::negativeCycle(g) == "2->0->2"));
-
-        vector<vector<int>> graph8 = {
-            {0, 0, 0, 0},
-            {4, 0, -6, 0},
-            {0, 0, 0, 5},
-            {0, -2, 0, 0}};
-        g.loadGraph(graph8);
-        CHECK(ariel::Algorithms::negativeCycle(g) == "1->2->3->1");
-    }
-
-    TEST_CASE("Empty graph"){
         ariel::Graph g;
         vector<vector<int>> graph = {};
         CHECK_THROWS(g.loadGraph(graph));
 
         vector<vector<int>> graph1 = {
-            {0,0,0},
-            {0,0,0},
-            {0,0,0}};
+            {0, 0, 0},
+            {0, 0, 0},
+            {0, 0, 0}};
         g.loadGraph(graph1);
         CHECK(ariel::Algorithms::isConnected(g) == false);
         CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle detected");
         CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "There is no path between vertex 0 and vertex 1");
         CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 1, 2}, B={}");
         CHECK(ariel::Algorithms::negativeCycle(g) == "There is no negative cycle in the graph");
-
     }

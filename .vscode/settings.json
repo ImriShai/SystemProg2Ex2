@@ -19,6 +19,7 @@
         "iomanip": "cpp",
         "ostream": "cpp",
         "system_error": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "stdexcept": "cpp"
     }
 }

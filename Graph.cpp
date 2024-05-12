@@ -3,21 +3,17 @@
 #include "Graph.hpp"
 using namespace ariel;
 
-
-
-void Graph::loadGraph(vector<vector<int>> adjMatrix)
-{
-    if (adjMatrix.empty())
-    {
+void Graph::loadGraph(vector<vector<int>> adjMatrix) {
+    if(adjMatrix.empty()){
         throw invalid_argument("The matrix is empty");
     }
-    if (adjMatrix.size() != adjMatrix[0].size())
+    if ( adjMatrix.size()!=adjMatrix[0].size())
     {
         throw invalid_argument("Not a valid graph!");
     }
-
-    this->adjMatrix = adjMatrix;          // loading the actual matrix
-    this->numVertices = adjMatrix.size(); // Initializing all flags for later use
+    
+    this->adjMatrix = adjMatrix; //loading the actual matrix
+    this->numVertices = adjMatrix.size(); //Initializing all flags for later use
     this->numEdges = 0;
     this->directed = false;
     this->weighted = false;
@@ -25,67 +21,50 @@ void Graph::loadGraph(vector<vector<int>> adjMatrix)
     this->negative = false;
     bool firstEdge = true;
     int firstEdgeVal = 0;
-    for (size_t i = 0; i < numVertices; i++)
-    {
-        for (size_t j = 0; j < numVertices; j++)
-        {
-            if (adjMatrix[i][j] != 0)
-            {
-                if (i == j)
+    for(size_t i = 0; i < numVertices; i++){
+        for(size_t j = 0; j < numVertices; j++){
+            if(adjMatrix[i][j] != 0){
+                if (i==j)
                 {
                     throw invalid_argument("Not a valid graph!");
                 }
-
-                numEdges++; // counting each edge
-                if (adjMatrix[i][j] < 0)
-                    negative = true; // updates negative if there is a negative edge
-                if (adjMatrix[i][j] != adjMatrix[j][i])
-                    directed = true; // updates directed if the graph is directed
-                if (adjMatrix[i][j] != 0 && adjMatrix[i][j] != 1)
-                    weighted = true; // updates weighted if the graph is weighted
-                if (firstEdge)
-                { // checks if all the edges have the same weight, uses a flag to check the first valid edge, and then compares all the other edges to it
+                
+                numEdges++;   //counting each edge
+                if (adjMatrix[i][j]<0) negative =true; //updates negative if there is a negative edge
+                if (adjMatrix[i][j]!=adjMatrix[j][i]) directed = true; //updates directed if the graph is directed
+                if (adjMatrix[i][j]!=0&&adjMatrix[i][j]!=1) weighted = true; //updates weighted if the graph is weighted
+                if (firstEdge){ //checks if all the edges have the same weight, uses a flag to check the first valid edge, and then compares all the other edges to it
                     firstEdgeVal = adjMatrix[i][j];
                     firstEdge = false;
                 }
-                else if (adjMatrix[i][j] != firstEdgeVal)
-                    sameWeight = false;
+                else if (adjMatrix[i][j]!=firstEdgeVal) sameWeight = false;
             }
         }
     }
-    if (!directed)
-        numEdges /= 2;
+    if (!directed) numEdges/=2;
     loaded = true;
 }
-void Graph::printGraph()
-{ // prints the graph according to the flags
-    if (!loaded)
-    {
-        throw invalid_argument("The graph is not loaded");
+ const void Graph::printGraph()  { //prints the graph according to the flags
+     if(!loaded){
+            throw invalid_argument("The graph is not loaded");
+        }
+    if (!directed&&!weighted){
+        cout<<"This is a undirected and unweighted graph with " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
-    if (!directed && !weighted)
-    {
-        cout << "This is a undirected and unweighted graph with " << numVertices << " vertices and " << numEdges << " edges" << endl;
+    if (!directed&&weighted&&!negative){
+        cout<<"This is a undirected weighted graph with non-negative weights, " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
-    if (!directed && weighted && !negative)
-    {
-        cout << "This is a undirected weighted graph with non-negative weights, " << numVertices << " vertices and " << numEdges << " edges" << endl;
+    if (!directed&&weighted&&negative){
+        cout<<"This is a undirected weighted graph with negative weights, " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
-    if (!directed && weighted && negative)
-    {
-        cout << "This is a undirected weighted graph with negative weights, " << numVertices << " vertices and " << numEdges << " edges" << endl;
+    if (directed&&!weighted){
+        cout<<"This is a directed and unweighted graph with " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
-    if (directed && !weighted)
-    {
-        cout << "This is a directed and unweighted graph with " << numVertices << " vertices and " << numEdges << " edges" << endl;
+    if (directed&&weighted&&!negative){
+        cout<<"This is a directed weighted graph with non-negative weights, " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
-    if (directed && weighted && !negative)
-    {
-        cout << "This is a directed weighted graph with non-negative weights, " << numVertices << " vertices and " << numEdges << " edges" << endl;
-    }
-    if (directed && weighted && negative)
-    {
-        cout << "This is a directed weighted graph with negative weights, " << numVertices << " vertices and " << numEdges << " edges" << endl;
+    if (directed&&weighted&&negative){
+        cout<<"This is a directed weighted graph with negative weights, " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
 }
 
@@ -492,20 +471,19 @@ Graph Graph::operator++(int)
         throw invalid_argument("The graph is not loaded");
     }
 
-    Graph newGraph;
-    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
+   
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
         {
             if (adjMatrix[i][j] != 0)
             {
-                newMatrix[i][j] = adjMatrix[i][j] + 1;
+                adjMatrix[i][j] = adjMatrix[i][j] + 1;
             }
         }
     }
-    newGraph.loadGraph(newMatrix);
-    return newGraph;
+    (*this).loadGraph(adjMatrix);
+    return *this;
 }
 /**
      @brief overloading the X-- operator. Decrements all the edges in the graph by 1. (Only the edges that exists)
@@ -583,8 +561,7 @@ Graph Graph::operator*=(int x)
     this->loadGraph(adjMatrix);
     return *this;
 }
-ostream &operator<<(ostream &output, Graph &g)
-{
+ ostream& ariel::operator<<(ostream &output, const Graph &g){
     if (!g.isLoaded())
     {
         throw invalid_argument("One of the graph isn't loaded");
@@ -593,7 +570,7 @@ ostream &operator<<(ostream &output, Graph &g)
     for (size_t i = 0; i < adjMatrix.size(); i++)
     {
         output << "[";
-        for (size_t j = 0; j < adjMatrix.size() - 1;)
+        for (size_t j = 0; j < adjMatrix.size() - 1;j++)
         {
             output << adjMatrix[i][j] << ", ";
         }

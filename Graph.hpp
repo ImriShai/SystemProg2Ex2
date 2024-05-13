@@ -63,20 +63,24 @@ class Graph{
     Graph operator+(); //overloading the + unary operator
     Graph operator-(); //overloading the - unary operator
     Graph operator*(const Graph& other); //overloading the * operator
+    
     Graph operator+=(const Graph& other); //overloading the += operator
     Graph operator*=(const Graph& other); //overloading the *= operator
+    
     bool  operator==(const Graph& other); //overloading the == operator
     bool operator!=(const Graph& other); //overloading the != operator
     bool operator<(const Graph& other); //overloading the < operator
     bool operator>(const Graph& other); //overloading the > operator
     bool operator<=(const Graph& other); //overloading the <= operator
     bool operator>=(const Graph& other); //overloading the >= operator
-    Graph operator++(); //overloading the X++ operator
-    Graph operator--(); //overloading the X-- operator
-    Graph operator++(int); //overloading the ++X operator
-    Graph operator--(int); //overloading the --X operator
+    Graph operator++(); //overloading the ++X operator
+    Graph operator--(); //overloading the --X operator
+    Graph operator++(int); //overloading the X++ operator
+    Graph operator--(int); //overloading the X-- operator
     Graph operator*(int x); //overloading the * operator, multiplying the graph by a scalar
     Graph operator*=(int x); //overloading the *= operator, multiplying the graph by a scalar
+    Graph operator/=(int x); //overloading the /= operator, dividing the graph by a scalar
+    Graph operator/(int x); //overloading the / operator, dividing the graph by a scalar
     friend ostream& operator<<(ostream& output, const Graph& g); //overloading the << operator 
 
 };

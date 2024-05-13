@@ -184,7 +184,7 @@ Graph Graph::operator-=(const Graph &other)
     {
         for (size_t j = 0; j < numVertices; j++)
         {
-            adjMatrix[i][j] = adjMatrix[i][j] + other.adjMatrix[i][j];
+            adjMatrix[i][j] = adjMatrix[i][j] - other.adjMatrix[i][j];
         }
     }
     this->loadGraph(adjMatrix);
@@ -287,7 +287,7 @@ Graph Graph::operator+=(const Graph &other)
     {
         for (size_t j = 0; j < numVertices; j++)
         {
-            adjMatrix[i][j] = adjMatrix[i][j] - other.adjMatrix[i][j];
+            adjMatrix[i][j] = adjMatrix[i][j] + other.adjMatrix[i][j];
         }
     }
     this->loadGraph(adjMatrix); // updates the graph
@@ -328,8 +328,9 @@ Graph Graph::operator*=(const Graph &other)
 bool Graph::operator==(const Graph &other)
 {
 
-    if (!loaded || !other.loaded)
+    if (!(*this).loaded || !other.loaded)
     {
+       
         throw invalid_argument("One of the graph isn't loaded");
     }
     bool eq = true;
@@ -397,16 +398,29 @@ bool Graph::operator>(const Graph &other)
 }
 bool Graph::operator<(const Graph &other)
 {
+    if (!loaded || !other.loaded)
+    {
+        throw invalid_argument("One of the graph isn't loaded");
+    }
     Graph g;
     g.loadGraph(other.adjMatrix);
-    return (g > (*this));
+    return ( g > (*this));
 }
 bool Graph::operator<=(const Graph &other)
+
 {
+     if (!loaded || !other.loaded)
+    {
+        throw invalid_argument("One of the graph isn't loaded");
+    }
     return ((*this) == other) || ((*this) < other);
 }
 bool Graph::operator>=(const Graph &other)
 {
+     if (!loaded || !other.loaded)
+    {
+        throw invalid_argument("One of the graph isn't loaded");
+    }
     return ((*this) == other) || ((*this) > other);
 }
 /**
@@ -471,19 +485,21 @@ Graph Graph::operator++(int)
         throw invalid_argument("The graph is not loaded");
     }
 
-   
+ 
+    Graph newGraph;
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
         {
             if (adjMatrix[i][j] != 0)
             {
-                adjMatrix[i][j] = adjMatrix[i][j] + 1;
+                newMatrix[i][j] = adjMatrix[i][j] + 1;
             }
         }
     }
-    (*this).loadGraph(adjMatrix);
-    return *this;
+    newGraph.loadGraph(newMatrix);
+    return newGraph;
 }
 /**
      @brief overloading the X-- operator. Decrements all the edges in the graph by 1. (Only the edges that exists)
@@ -564,9 +580,10 @@ Graph Graph::operator*=(int x)
  ostream& ariel::operator<<(ostream &output, const Graph &g){
     if (!g.isLoaded())
     {
-        throw invalid_argument("One of the graph isn't loaded");
+        throw invalid_argument("The graph isn't loaded");
     }
     vector<vector<int>> adjMatrix = g.getAdjMatrix();
+    output<<"The matrix of the graph is:\n";
     for (size_t i = 0; i < adjMatrix.size(); i++)
     {
         output << "[";
@@ -579,3 +596,53 @@ Graph Graph::operator*=(int x)
     return output;
 }
 
+ Graph Graph::operator/(int x){
+    if (!loaded)
+    {
+        throw invalid_argument("The graph is not loaded");
+    }
+    if (x==0)
+    {
+        throw invalid_argument("Cannot divide by 0");
+    }
+    
+
+    Graph newGraph;
+    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
+    for (size_t i = 0; i < numVertices; i++)
+    {
+        for (size_t j = 0; j < numVertices; j++)
+        {
+            newMatrix[i][j] = adjMatrix[i][j] / x;
+        }
+    }
+    newGraph.loadGraph(newMatrix);
+    return newGraph;
+
+
+ }
+
+ Graph Graph::operator/=(int x)
+{
+    if (!loaded)
+    {
+        throw invalid_argument("The graph is not loaded");
+    }
+    if (x==0)
+    {
+        throw invalid_argument("Cannot divide by 0");
+    }   
+    
+    
+
+    for (size_t i = 0; i < numVertices; i++)
+    {
+        for (size_t j = 0; j < numVertices; j++)
+        {
+
+            adjMatrix[i][j] = adjMatrix[i][j] / x;
+        }
+    }
+    this->loadGraph(adjMatrix);
+    return *this;
+}

@@ -1,6 +1,7 @@
 #include "doctest.h"
 #include "Algorithms.hpp"
 #include "Graph.hpp"
+#include <sstream> // for ostringstream, to check << operator
 
 /**
  * @brief Test cases for the Graph class and the Algorithms class
@@ -26,8 +27,8 @@ TEST_CASE("Test without loading")
 
 TEST_CASE("Test isConnected")
 {
-     ariel::Graph g;
-    
+    ariel::Graph g;
+
     vector<vector<int>> graph = {
         {0, 1, 0},
         {1, 0, 1},
@@ -127,28 +128,25 @@ TEST_CASE("Test shortestPath for BFS and BF")
     g.loadGraph(graph7);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "There is no path between vertex 0 and vertex 3");
 
-     vector<vector<int>> graph8 =
+    vector<vector<int>> graph8 =
         {{0, 10, -1, 1, 0},
          {10, 0, 10, 0, 0},
          {-1, 10, 0, 0, 2},
          {1, 0, 0, 0, 0},
          {0, 0, 2, 0, 0}};
     g.loadGraph(graph8);
-    CHECK(ariel::Algorithms::shortestPath(g,1,2) == "1->0->2");
-    CHECK(ariel::Algorithms::shortestPath(g,0,2) == "0->2");
-    CHECK(ariel::Algorithms::shortestPath(g,1,0) == "1->2->0");
+    CHECK(ariel::Algorithms::shortestPath(g, 1, 2) == "1->0->2");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "0->2");
+    CHECK(ariel::Algorithms::shortestPath(g, 1, 0) == "1->2->0");
 
-    vector<vector<int>> graph9={{0, 4, 2, 0, 0, 0},
-                                {4, 0, -5, -5, 0, -7},
-                                {2, -5, 0, 0, -1, 0},
-                                {0, -5, 0, 0, 0, 0},
-                                {0, 0, -1, 0, 0, 0},
-                                {0, -7, 0, 0, 0, 0}};
+    vector<vector<int>> graph9 = {{0, 4, 2, 0, 0, 0},
+                                  {4, 0, -5, -5, 0, -7},
+                                  {2, -5, 0, 0, -1, 0},
+                                  {0, -5, 0, 0, 0, 0},
+                                  {0, 0, -1, 0, 0, 0},
+                                  {0, -7, 0, 0, 0, 0}};
     g.loadGraph(graph9);
-    CHECK(ariel::Algorithms::shortestPath(g,0,5)=="0->2->1->5");
-
-
-
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 5) == "0->2->1->5");
 }
 TEST_CASE("Test shortest path Dijkstra")
 {
@@ -408,24 +406,270 @@ TEST_CASE("Test negative cycle")
         {0, -2, 0, 0}};
     g.loadGraph(graph8);
     CHECK(ariel::Algorithms::negativeCycle(g) == "1->2->3->1");
-
-   
 }
 
-    TEST_CASE("Empty graph")
-    {
-        ariel::Graph g;
-        vector<vector<int>> graph = {};
-        CHECK_THROWS(g.loadGraph(graph));
+TEST_CASE("Empty graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {};
+    CHECK_THROWS(g.loadGraph(graph));
 
-        vector<vector<int>> graph1 = {
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0}};
-        g.loadGraph(graph1);
-        CHECK(ariel::Algorithms::isConnected(g) == false);
-        CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle detected");
-        CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "There is no path between vertex 0 and vertex 1");
-        CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 1, 2}, B={}");
-        CHECK(ariel::Algorithms::negativeCycle(g) == "There is no negative cycle in the graph");
-    }
+    vector<vector<int>> graph1 = {
+        {0, 0, 0},
+        {0, 0, 0},
+        {0, 0, 0}};
+    g.loadGraph(graph1);
+    CHECK(ariel::Algorithms::isConnected(g) == false);
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle detected");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "There is no path between vertex 0 and vertex 1");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 1, 2}, B={}");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "There is no negative cycle in the graph");
+}
+
+// Tests for EX2
+TEST_CASE("Test graph addition")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g3 = g1 + g2;
+    ostringstream oss;
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 2, 1]\n[2, 0, 3]\n[1, 3, 0]\n");
+    g2 += g1;
+    CHECK((g2 == g3) == true);
+    ariel::Graph g4;
+    vector<vector<int>> graph2 = {
+        {0, -2, 4},
+        {2, 0, 1},
+        {4, 1, 0}};
+    g4.loadGraph(graph2);
+    ariel::Graph g5 = g1 + g4;
+    g4 += g1;
+    oss.str("");
+    oss << g5;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, -1, 4]\n[3, 0, 2]\n[4, 2, 0]\n");
+    CHECK((g4 == g5) == true);
+}
+
+TEST_CASE("Test graph subtraction")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g3 = g2 - g1;
+    ostringstream oss;
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 0, 1]\n[0, 0, 1]\n[1, 1, 0]\n");
+    g2 -= g1;
+    CHECK((g2 == g3) == true);
+    ariel::Graph g4;
+    vector<vector<int>> graph2 = {
+        {0, -2, 4},
+        {2, 0, 1},
+        {4, 1, 0}};
+    g4.loadGraph(graph2);
+    ariel::Graph g5 = g4 - g1;
+    g4 -= g1;
+    oss.str("");
+    oss << g5;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, -3, 4]\n[1, 0, 0]\n[4, 0, 0]\n");
+    CHECK((g4 == g5) == true);
+}
+
+TEST_CASE("Check Unarys")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 2, 0, -6},
+        {1, 0, 1, 4},
+        {2, 1, 0, -8},
+        {0, 0, 0, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2 = -g1;
+    ostringstream oss;
+    oss << g2;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, -2, 0, 6]\n[-1, 0, -1, -4]\n[-2, -1, 0, 8]\n[0, 0, 0, 0]\n");
+    ariel::Graph g3 = +g1;
+    CHECK((g3 == g1) == true);
+}
+
+TEST_CASE("Test graph multiplication by scalar")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 2, 0, -6},
+        {1, 0, 1, 4},
+        {2, 1, 0, -8},
+        {0, 0, 0, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2 = g1 * -2;
+    ostringstream oss;
+    oss << g2;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, -4, 0, 12]\n[-2, 0, -2, -8]\n[-4, -2, 0, 16]\n[0, 0, 0, 0]\n");
+    g1 *= -2;
+    CHECK((g1 == g2) == true);
+    ariel::Graph g3 = g1 * 0;
+    oss.str("");
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n");
+}
+
+TEST_CASE("Test graph division by scalar")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 2, 0, -6},
+        {1, 0, 1, 4},
+        {2, 1, 0, -8},
+        {0, 0, 0, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2 = g1 / 2;
+    ostringstream oss;
+    oss << g2;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 1, 0, -3]\n[0, 0, 0, 2]\n[1, 0, 0, -4]\n[0, 0, 0, 0]\n"); //rounding down
+    g1 /= 2;
+    CHECK((g1 == g2) == true);
+    ariel::Graph g3 = g1 / 1;
+    oss.str("");
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 1, 0, -3]\n[0, 0, 0, 2]\n[1, 0, 0, -4]\n[0, 0, 0, 0]\n");
+    CHECK((g1 == g3) == true);
+    
+}
+
+
+
+TEST_CASE("Test graph multiplication")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g4 = g1 * g2;
+    vector<vector<int>> expectedGraph = {
+        {0, 0, 2},
+        {1, 0, 1},
+        {1, 0, 0}};
+    ostringstream oss;
+    oss << g4;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 0, 2]\n[1, 0, 1]\n[1, 0, 0]\n");
+    g1 *= g2;
+    CHECK((g1 == g4) == true);
+}
+
+TEST_CASE("Test plus postfix and prefix"){
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 2, 0, -6},
+        {1, 0, 1, 4},
+        {2, 1, 0, -8},
+        {0, 0, 0, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2 = g1++;
+    ostringstream oss;
+    oss << g2;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 2, 0, -6]\n[1, 0, 1, 4]\n[2, 1, 0, -8]\n[0, 0, 0, 0]\n");
+    oss.str("");
+    oss << g1;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 4, 0, -12]\n[2, 0, 2, 8]\n[4, 2, 0, -16]\n[0, 0, 0, 0]\n");
+    ariel::Graph g3 = ++g1;
+    oss.str("");
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 8, 0, -24]\n[4, 0, 4, 16]\n[8, 4, 0, -32]\n[0, 0, 0, 0]\n");
+    
+}
+
+
+
+TEST_CASE("Invalid operations")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1, 1},
+        {1, 0, 2, 2},
+        {1, 2, 0, 3},
+        {1, 2, 3, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g5;
+    vector<vector<int>> graph2 = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 0},
+        {0, 0, 1, 0, 1},
+        {1, 0, 0, 1, 0}};
+    g5.loadGraph(graph2);
+    CHECK_THROWS(g5 * g1);
+    CHECK_THROWS(g1 * g2);
+
+    // Addition of two graphs with different dimensions
+    ariel::Graph g6;
+    vector<vector<int>> graph3 = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 0},
+        {0, 0, 1, 0, 1},
+        {1, 0, 0, 1, 0}};
+    g6.loadGraph(graph3);
+    CHECK_THROWS(g1 + g6);
+    CHECK_THROWS(g6 / 0);
+    CHECK_THROWS(g6 /= 0);
+    ariel::Graph g7;
+    CHECK_THROWS((g7 + g6));
+    CHECK_THROWS((g7 - g6));
+    CHECK_THROWS((g7 * g6));
+    CHECK_THROWS((g7--));
+    CHECK_THROWS((g7++));
+    CHECK_THROWS((++g7));
+    CHECK_THROWS(-g7);
+    CHECK_THROWS(+g7);
+    CHECK_THROWS(--g7);
+    CHECK_THROWS(g7 / 2);
+    CHECK_THROWS(cout << g7);
+    CHECK_THROWS(g7 *= g6);
+    CHECK_THROWS(g7 /= 4);
+    CHECK_THROWS(g7 *= 4);
+    CHECK_THROWS(g7 * 4);
+    CHECK_THROWS(g7 += g6);
+
+    CHECK_THROWS(g7 *= -2);
+    CHECK_THROWS(g7 -= g6);
+    // CHECK((g7 == g6)); // there is a problem with doctest when trying to check throw on boolean expression, but it does throw
+    // CHECK(g7 <= g6);
+    // CHECK(g7 != g6);
+    // CHECK(g7 < g6);
+    // CHECK(g7 > g6);
+    // CHECK(g7  >= g6);
+}

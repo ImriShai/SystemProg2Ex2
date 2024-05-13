@@ -486,7 +486,7 @@ Graph Graph::operator++(int)
     }
 
  
-    Graph newGraph;
+    Graph newGraph = *this;
     vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
     for (size_t i = 0; i < numVertices; i++)
     {
@@ -494,11 +494,12 @@ Graph Graph::operator++(int)
         {
             if (adjMatrix[i][j] != 0)
             {
-                newMatrix[i][j] = adjMatrix[i][j] + 1;
+                adjMatrix[i][j] = adjMatrix[i][j] + 1;
             }
         }
     }
-    newGraph.loadGraph(newMatrix);
+    
+    (*this).loadGraph(adjMatrix);
     return newGraph;
 }
 /**
@@ -513,19 +514,18 @@ Graph Graph::operator--(int)
         throw invalid_argument("The graph is not loaded");
     }
 
-    Graph newGraph;
-    vector<vector<int>> newMatrix((size_t)numVertices, vector<int>((size_t)numVertices, 0));
+    Graph newGraph = *this;
     for (size_t i = 0; i < numVertices; i++)
     {
         for (size_t j = 0; j < numVertices; j++)
         {
             if (adjMatrix[i][j] != 0)
             {
-                newMatrix[i][j] = adjMatrix[i][j] - 1;
+                adjMatrix[i][j] = adjMatrix[i][j] - 1;
             }
         }
     }
-    newGraph.loadGraph(newMatrix);
+    (*this).loadGraph(adjMatrix);
     return newGraph;
 }
 /**

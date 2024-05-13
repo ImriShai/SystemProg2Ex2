@@ -598,12 +598,32 @@ TEST_CASE("Test plus postfix and prefix"){
     CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 2, 0, -6]\n[1, 0, 1, 4]\n[2, 1, 0, -8]\n[0, 0, 0, 0]\n");
     oss.str("");
     oss << g1;
-    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 4, 0, -12]\n[2, 0, 2, 8]\n[4, 2, 0, -16]\n[0, 0, 0, 0]\n");
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 3, 0, -5]\n[2, 0, 2, 5]\n[3, 2, 0, -7]\n[0, 0, 0, 0]\n");
     ariel::Graph g3 = ++g1;
     oss.str("");
     oss << g3;
-    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 8, 0, -24]\n[4, 0, 4, 16]\n[8, 4, 0, -32]\n[0, 0, 0, 0]\n");
-    
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 4, 0, -4]\n[3, 0, 3, 6]\n[4, 3, 0, -6]\n[0, 0, 0, 0]\n");
+}
+
+TEST_CASE("Test minus postfix and prefix"){
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 2, 0, -6},
+        {1, 0, 1, 4},
+        {2, 1, 0, -8},
+        {0, 0, 0, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2 = g1--;
+    ostringstream oss;
+    oss << g2;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 2, 0, -6]\n[1, 0, 1, 4]\n[2, 1, 0, -8]\n[0, 0, 0, 0]\n");
+    oss.str("");
+    oss << g1;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 1, 0, -7]\n[0, 0, 0, 3]\n[1, 0, 0, -9]\n[0, 0, 0, 0]\n");
+    ariel::Graph g3 = --g1;
+    oss.str("");
+    oss << g3;
+    CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 0, 0, -8]\n[0, 0, 0, 2]\n[0, 0, 0, -10]\n[0, 0, 0, 0]\n");
 }
 
 

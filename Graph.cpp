@@ -67,19 +67,24 @@ void Graph::loadGraph(vector<vector<int>> adjMatrix) {
         cout<<"This is a directed weighted graph with negative weights, " << numVertices << " vertices and " << numEdges <<" edges"<<endl;
     }
 }
-
+/**
+ @brief  A utill function that checks if a matrix contains another matrix
+ @param matrixA - the matrix to check if it contains matrixB
+ @param matrixB - the matrix to check if it is contained in matrixA
+ @return true if matrixA contains matrixB, false otherwise
+*/
 static bool contains(const vector<vector<int>> &matrixA, const vector<vector<int>> &matrixB)
 {
     int n = matrixA.size();
     int m = matrixB.size();
     if (n < m)
         return false;
-    for (size_t i = 0; i <= n - m; ++i)
+    for (size_t i = 0; i <= n - m; ++i) //checks of each possible starting point of the matrix
     {
         for (size_t j = 0; j <= n - m; ++j)
         {
             bool match = true;
-            for (size_t x = 0; x < m; ++x)
+            for (size_t x = 0; x < m; ++x) //checks if the submatrix of matrixA is equal to matrixB
             {
                 for (size_t y = 0; y < m; ++y)
                 {
@@ -294,6 +299,12 @@ Graph Graph::operator+=(const Graph &other)
     return *this;
 }
 
+/**
+     @brief overloading the *= operator
+     @param other - the graph to multiply with the current graph
+     @return the current graph after the multiplication
+     @throw invalid_argument if one of the graphs is not loaded or if the graphs have different number of vertices
+*/
 Graph Graph::operator*=(const Graph &other)
 {
     if (!loaded || !other.loaded)
@@ -325,6 +336,12 @@ Graph Graph::operator*=(const Graph &other)
     this->loadGraph(newMatrix);
     return *this;
 }
+/**
+     @brief overloading the == operator. Checks if the graphs are equal. The graphs are equal if they have the same number of vertices and the same edges, or if none contains the other
+     @param other - the graph to compare with
+     @return true if the graphs are equal, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator==(const Graph &other)
 {
 
@@ -333,7 +350,7 @@ bool Graph::operator==(const Graph &other)
        
         throw invalid_argument("One of the graph isn't loaded");
     }
-    bool eq = true;
+    bool eq = true;                                  //If the graphs have the same number of vertices and the same edges, go through the matrix and check if they are equal
     if (this->numVertices == other.numVertices)
     {
         for (size_t i = 0; i < numVertices; i++)
@@ -347,18 +364,29 @@ bool Graph::operator==(const Graph &other)
                 }
             }
         }
-        if (eq)
+        if (eq) //If the graphs are equal, return true
             return true;
     }
-    if (!((*this) > other) && !((*this) < other))
+    if (!((*this) > other) && !((*this) < other)) //If the graphs are not equal, check if one contains the other, if so, they are not equal, otherwise they are
         return true;
     return false;
 }
+/**
+     @brief overloading the != operator. Checks if the graphs are not equal. 
+     @param other - the graph to compare with
+     @return true if the graphs are not equal, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator!=(const Graph &other)
 {
     return !(*this == other);
 }
-
+/**
+     @brief overloading the > operator. Checks if the current graph is greater than the other graph. The current graph is greater than the other graph if it contains the other graph, or if it has more edges and the other graph dosent contain it, or if it has more vertices.If all equal, the graphs are equal
+     @param other - the graph to compare with
+     @return true if the current graph is greater than the other graph, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator>(const Graph &other)
 {
     if (!loaded || !other.loaded)
@@ -366,7 +394,7 @@ bool Graph::operator>(const Graph &other)
         throw invalid_argument("One of the graph isn't loaded");
     }
 
-    if (this->numVertices == other.numVertices)
+    if (this->numVertices == other.numVertices)  //If the graphs have the same number of vertices and the same edges, go through the matrix and check if they are equal. if they are, return false
     {
         bool eq = true;
         for (size_t i = 0; i < numVertices; i++)
@@ -385,17 +413,23 @@ bool Graph::operator>(const Graph &other)
         if (eq)
             return false;
     }
-    bool g1Cg2 = contains(this->adjMatrix, other.adjMatrix);
-    bool g2Cg1 = contains(other.adjMatrix, this->adjMatrix);
+    bool g1Cg2 = contains(this->adjMatrix, other.adjMatrix);//checks if the current graph contains the other graph
+    bool g2Cg1 = contains(other.adjMatrix, this->adjMatrix);//checks if the other graph contains the current graph
 
-    if (g1Cg2)
-        return true; /// test what happens if one directed and the other not.
-    else if (g2Cg1)
+    if (g1Cg2)//if the current graph contains the other graph, return true
+        return true; 
+    else if (g2Cg1)//if the other graph contains the current graph, return false
         return false;
-    if (this->numEdges != other.numEdges)
+    if (this->numEdges != other.numEdges)//else, if the current graph has more edges, return true
         return this->numEdges > other.numEdges;
-    return this->numVertices > other.numVertices;
+    return this->numVertices > other.numVertices;//if they have the same number of edges, return true if the current graph has more vertices
 }
+/**
+     @brief overloading the < operator. Checks if the current graph is less than the other graph. 
+     @param other - the graph to compare with
+     @return true if the current graph is less than the other graph, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator<(const Graph &other)
 {
     if (!loaded || !other.loaded)
@@ -406,6 +440,12 @@ bool Graph::operator<(const Graph &other)
     g.loadGraph(other.adjMatrix);
     return ( g > (*this));
 }
+/**
+     @brief overloading the < operator. Checks if the current graph is less than or equal to the other graph. 
+     @param other - the graph to compare with
+     @return true if the current graph is less than or equal to the other graph, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator<=(const Graph &other)
 
 {
@@ -415,6 +455,12 @@ bool Graph::operator<=(const Graph &other)
     }
     return ((*this) == other) || ((*this) < other);
 }
+/**
+     @brief overloading the > operator. Checks if the current graph is greater than or equal to the other graph. 
+     @param other - the graph to compare with
+     @return true if the current graph is greater than or equal to the other graph, false otherwise
+     @throw invalid_argument if one of the graphs is not loaded
+*/
 bool Graph::operator>=(const Graph &other)
 {
      if (!loaded || !other.loaded)
@@ -577,6 +623,13 @@ Graph Graph::operator*=(int x)
     this->loadGraph(adjMatrix);
     return *this;
 }
+/**
+ * @brief overloading the << operator, prints the matrix of the graph
+ * @param output - the output stream
+ * @param g - the graph to print
+ * @return the output stream
+ * @throw invalid_argument if the graph is not loaded
+*/
  ostream& ariel::operator<<(ostream &output, const Graph &g){
     if (!g.isLoaded())
     {
@@ -596,6 +649,12 @@ Graph Graph::operator*=(int x)
     return output;
 }
 
+/**
+ * @brief overloading the / operator, divides the graph by a scalar
+ * @param x - the scalar to divide the graph by
+ * @return the new graph after the division
+ * @throw invalid_argument if the graph is not loaded or if x is 0
+*/
  Graph Graph::operator/(int x){
     if (!loaded)
     {
@@ -621,7 +680,12 @@ Graph Graph::operator*=(int x)
 
 
  }
-
+/**
+ * @brief overloading the /= operator, divides the graph by a scalar
+ *  @param x - the scalar to divide the graph by
+ * @return the current graph after the division
+ * @throw invalid_argument if the graph is not loaded or if x is 0
+*/
  Graph Graph::operator/=(int x)
 {
     if (!loaded)

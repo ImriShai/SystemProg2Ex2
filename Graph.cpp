@@ -117,7 +117,7 @@ static bool contains(const vector<vector<int>> &matrixA, const vector<vector<int
     @throw invalid_argument if one of the graphs is not loaded or if the graphs have different number of vertices
 
 */
-Graph Graph::operator+(const Graph &other)
+Graph Graph::operator+(const Graph &other) const
 {
     if (!loaded || !other.loaded)
     {
@@ -146,7 +146,7 @@ Graph Graph::operator+(const Graph &other)
      @return the new graph after the subtraction
      @throw invalid_argument if one of the graphs is not loaded or if the graphs have different number of vertices
 */
-Graph Graph::operator-(const Graph &other)
+Graph Graph::operator-(const Graph &other) const
 {
     if (!loaded || !other.loaded)
     {
@@ -240,7 +240,7 @@ Graph Graph::operator-()
  * @return the new graph after the multiplication
  * @throw invalid_argument if one of the graphs is not loaded or if the graphs have different number of vertices
  */
-Graph Graph::operator*(const Graph &other)
+Graph Graph::operator*(const Graph &other) const 
 {
     if (!loaded || !other.loaded)
     {
@@ -342,7 +342,7 @@ Graph Graph::operator*=(const Graph &other)
      @return true if the graphs are equal, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
 */
-bool Graph::operator==(const Graph &other)
+bool Graph::operator==(const Graph &other) const
 {
 
     if (!(*this).loaded || !other.loaded)
@@ -377,7 +377,7 @@ bool Graph::operator==(const Graph &other)
      @return true if the graphs are not equal, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
 */
-bool Graph::operator!=(const Graph &other)
+bool Graph::operator!=(const Graph &other) const
 {
     return !(*this == other);
 }
@@ -387,7 +387,7 @@ bool Graph::operator!=(const Graph &other)
      @return true if the current graph is greater than the other graph, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
 */
-bool Graph::operator>(const Graph &other)
+bool Graph::operator>(const Graph &other) const
 {
     if (!loaded || !other.loaded)
     {
@@ -430,7 +430,7 @@ bool Graph::operator>(const Graph &other)
      @return true if the current graph is less than the other graph, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
 */
-bool Graph::operator<(const Graph &other)
+bool Graph::operator<(const Graph &other) const
 {
     if (!loaded || !other.loaded)
     {
@@ -445,8 +445,8 @@ bool Graph::operator<(const Graph &other)
      @param other - the graph to compare with
      @return true if the current graph is less than or equal to the other graph, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
-*/
-bool Graph::operator<=(const Graph &other)
+*/ 
+bool Graph::operator<=(const Graph &other) const
 
 {
      if (!loaded || !other.loaded)
@@ -461,7 +461,7 @@ bool Graph::operator<=(const Graph &other)
      @return true if the current graph is greater than or equal to the other graph, false otherwise
      @throw invalid_argument if one of the graphs is not loaded
 */
-bool Graph::operator>=(const Graph &other)
+bool Graph::operator>=(const Graph &other) const
 {
      if (!loaded || !other.loaded)
     {
@@ -580,7 +580,7 @@ Graph Graph::operator--(int)
      @return the new graph after the multiplication
      @throw invalid_argument if the graph is not loaded
 */
-Graph Graph::operator*(int x)
+Graph Graph::operator*(int x) const
 {
     if (!loaded)
     {
@@ -655,7 +655,7 @@ Graph Graph::operator*=(int x)
  * @return the new graph after the division
  * @throw invalid_argument if the graph is not loaded or if x is 0
 */
- Graph Graph::operator/(int x){
+ Graph Graph::operator/(int x) const { 
     if (!loaded)
     {
         throw invalid_argument("The graph is not loaded");

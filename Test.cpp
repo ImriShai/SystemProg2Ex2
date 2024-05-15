@@ -626,6 +626,127 @@ TEST_CASE("Test minus postfix and prefix"){
     CHECK_EQ(oss.str(), "The matrix of the graph is:\n[0, 0, 0, -8]\n[0, 0, 0, 2]\n[0, 0, 0, -10]\n[0, 0, 0, 0]\n");
 }
 
+TEST_CASE("Test graph equality")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    CHECK((g1 == g2) == false);
+    CHECK((g1 != g2) == true);
+    ariel::Graph g3;
+    vector<vector<int>> graph2 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g3.loadGraph(graph2);
+    CHECK((g1 == g3) == true);
+    vector<vector<int>> graph3 = {
+        {0, 2, 0},
+        {2, 0, 2},
+        {0, 2, 0}};
+    g1.loadGraph(graph);
+    g3.loadGraph(graph3);
+    CHECK((g1 > g3) == false);
+    CHECK((g1 < g3) == false);
+    CHECK((g1 == g3) == true);
+
+    
+
+}
+
+TEST_CASE("Test greater and greater or equal operators"){
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    CHECK((g1 > g2) == false);
+    CHECK((g2 > g1) == true);
+    CHECK((g1 >= g2) == false);
+    CHECK((g2 >= g1) == true);
+    ariel::Graph g3;
+    vector<vector<int>> graph2 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g3.loadGraph(graph2);
+    CHECK((g1 > g3) == false);
+    CHECK((g1 < g3) == false);
+    CHECK((g1 == g3) == true);
+     CHECK((g1 >= g3) == true);
+    CHECK((g1 <= g3) == true);
+
+    vector<vector<int>> graph3 = {
+        {0, 1},
+        {1, 0}};
+    g3.loadGraph(graph3);
+    CHECK((g1 > g3) == true);
+
+    vector<vector<int>> graph4 = {
+        {0, 0, 5},
+        {1, 0, 0},
+        {3, 1, 0}};
+    g1.loadGraph(graph4);
+    vector<vector<int>> graph5 = {
+        {0, 5},
+        {0, 0}};
+    g3.loadGraph(graph5);
+    CHECK((g1 > g3) == true);
+    CHECK((g1 < g3) == false);
+
+    g1.loadGraph(graph2);
+    vector<vector<int>> graph6 = {
+        {0, 5},
+        {7, 0}};
+    g3.loadGraph(graph6);
+    CHECK((g1 > g3) == true);
+    CHECK((g1 < g3) == false);
+    vector<vector<int>> graph7 = {
+        {0, 2, 0},
+        {2, 0, 2},
+        {0, 2, 0}};
+    g1.loadGraph(graph2);
+    g3.loadGraph(graph7);
+    CHECK((g1 > g3) == false);
+    CHECK((g1 < g3) == false);
+    CHECK((g1 == g3) == true);
+    vector<vector<int>> graph8 = {
+        {0, 0, 0, 0},
+        {4, 0, -6, 0},
+        {0, 0, 0, 5},
+        {0, -2, 0, 0}};
+    g1.loadGraph(graph8);
+    vector<vector<int>> graph9 = {
+        { 0, -6, 0},
+        { 0, 0, 5},
+        { -2, 0, 0}};
+    g3.loadGraph(graph9);
+    CHECK((g1 > g3) == true);
+    CHECK((g1 < g3) == false);
+    CHECK((g1 == g3) == false);
+
+
+    
+
+    
+}
+
 
 
 TEST_CASE("Invalid operations")

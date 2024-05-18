@@ -644,7 +644,7 @@ Graph Graph::operator*=(int x)
         {
             output << adjMatrix[i][j] << ", ";
         }
-        output << adjMatrix[i][adjMatrix.size() - 1] << "]\n";
+        output << adjMatrix[i][adjMatrix.size() - 1] << "]"<<endl;
     }
     return output;
 }
